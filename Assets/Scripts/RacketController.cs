@@ -1,35 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 public class RacketController : MonoBehaviour
 {
-    public float speed;
-    public KeyCode up;
-    public KeyCode down;
+    public float speed = 5f;
     private Rigidbody rb;
+    private InputAction moveAction;
+    private float moveInput;
 
-    void Start()
+    private void Awake()
+    {
+        moveAction = new InputAction(
+            name: "Move",
+            type: InputActionType.Value,
+            binding: ""
+        );
+
+        moveAction.AddCompositeBinding("1DAxis")
+            .With("Negative", "<Keyboard>/s")
+            .With("Positive", "<Keyboard>/w");
+
+        moveAction.performed += ctx => moveInput = ctx.ReadValue<float>();
+        moveAction.canceled += ctx => moveInput = 0f;
+    }
+
+    private void OnEnable()
+    {
+        moveAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        moveAction.Disable();
+    }
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        bool pressedUp = Input.GetKey(this.up);
-        bool pressedDown = Input.GetKey(this.down);
-
-        if (pressedUp)
-        {
-            rb.linearVelocity = Vector3.forward * speed;
-        }
-        else if (pressedDown)
-        {
-            rb.linearVelocity = Vector3.back * speed;
-        }
-        else
-        {
-            rb.linearVelocity = Vector3.zero;
-        }
+        rb.linearVelocity = Vector3.forward * moveInput * speed;
     }
 }
