@@ -5,12 +5,18 @@ using UnityEngine.InputSystem.Controls;
 public class RacketController : MonoBehaviour
 {
     public float speed = 5f;
+    public Key positiveKey = Key.W;
+    public Key negativeKey = Key.S;
+
     private Rigidbody rb;
     private InputAction moveAction;
     private float moveInput;
 
     private void Awake()
     {
+        string positiveBinding = $"<Keyboard>/{positiveKey.ToString().ToLower()}";
+        string negativeBinding = $"<Keyboard>/{negativeKey.ToString().ToLower()}";
+
         moveAction = new InputAction(
             name: "Move",
             type: InputActionType.Value,
@@ -18,8 +24,8 @@ public class RacketController : MonoBehaviour
         );
 
         moveAction.AddCompositeBinding("1DAxis")
-            .With("Negative", "<Keyboard>/s")
-            .With("Positive", "<Keyboard>/w");
+            .With("Negative", negativeBinding)
+            .With("Positive", positiveBinding);
 
         moveAction.performed += ctx => moveInput = ctx.ReadValue<float>();
         moveAction.canceled += ctx => moveInput = 0f;
