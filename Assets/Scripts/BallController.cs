@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class BallController : MonoBehaviour
 {
 
     //Variables not hardcoded for quick Change in case of value changing
@@ -16,6 +16,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
     private Vector3 direction;
 
     private Rigidbody rb;
+
+    private bool stopped = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,7 +46,11 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
      void FixedUpdate()
     {
-        this.rb.MovePosition(this.rb.position + direction * speed * Time.fixedDeltaTime);
+        if(stopped){
+            return;
+        }else{
+            rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
+        }
     }
 
 
@@ -68,10 +74,6 @@ public class NewMonoBehaviourScript : MonoBehaviour
         }
 
     }
-
-
-
-
   private void ChooseDirection()
 {
     float xRangeMin = -1f;
@@ -85,5 +87,16 @@ public class NewMonoBehaviourScript : MonoBehaviour
     this.direction = new Vector3(baseXDirectionValue * signX, baseYDirectionValue, baseZDirectionValue * signZ);
 }
 
-    
+    public void Stop()
+    {
+        this.stopped = true;
+    }
+
+    public void Go()
+    {
+        ChooseDirection();
+        this.stopped = false;   
+    }
+
+
 }
