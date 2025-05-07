@@ -1,26 +1,38 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
 public class RacketController : MonoBehaviour
 {
+    private string ballTagName = "Ball";
+
     public float speed = 5f;
-    public Key positiveKey = Key.W;
-    public Key negativeKey = Key.S;
+    public Key positiveKey;
+    public Key negativeKey;
+
+    public bool isPlayer = true;
 
     private Rigidbody rb;
+    private Transform ball;
+
     private InputAction moveAction;
     private float moveInput;
 
     private void Awake()
+    {
+        if (isPlayer)
+        {
+            SetupPlayerInput();
+        }
+    }
+
+    private void SetupPlayerInput()
     {
         string positiveBinding = $"<Keyboard>/{positiveKey.ToString().ToLower()}";
         string negativeBinding = $"<Keyboard>/{negativeKey.ToString().ToLower()}";
 
         moveAction = new InputAction(
             name: "Move",
-            type: InputActionType.Value,
-            binding: ""
+            type: InputActionType.Value
         );
 
         moveAction.AddCompositeBinding("1DAxis")
@@ -33,21 +45,48 @@ public class RacketController : MonoBehaviour
 
     private void OnEnable()
     {
-        moveAction.Enable();
+        if (isPlayer)
+            moveAction?.Enable();
     }
 
     private void OnDisable()
     {
-        moveAction.Disable();
+        if (isPlayer)
+            moveAction?.Disable();
     }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        if (!isPlayer)
+            ball = GameObject.FindGameObjectWithTag(ballTagName).transform;
     }
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = Vector3.forward * moveInput * speed;
+        if (isPlayer)
+        {
+            rb.linearVelocity = Vector3.forward * moveInput * speed;
+        }
+        else
+        {
+            if (ball == null) return;
+
+            int direction = ball.position.z.CompareTo(transform.position.z);
+
+            switch (direction)
+            {
+                case 1:
+                    rb.linearVelocity = Vector3.forward * speed;
+                    break;
+                case -1:
+                    rb.linearVelocity = Vector3.back * speed;
+                    break;
+                case 0:
+                    rb.linearVelocity = Vector3.zero;
+                    break;
+            }
+        }
     }
 }
