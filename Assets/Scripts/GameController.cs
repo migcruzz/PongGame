@@ -2,48 +2,50 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(GameController))]
 public class GameController : MonoBehaviour
 {
-    public Text scoreTextLeft;
-    public Text scoreTextRight;
+    [Header("UI References")]
+    [SerializeField] private Text scoreTextLeft;
+    [SerializeField] private Text scoreTextRight;
 
-    public GameObject ball;
-    public Key startKey;
+    [Header("Gameplay Settings")]
+    [SerializeField] private GameObject ball;
+    [SerializeField] private Key startKey = Key.Space;
 
     private BallController ballController;
     private InputAction startGameAction;
+    private Vector3 startingPosition;
 
     private bool started = false;
     private int scoreLeft = 0;
     private int scoreRight = 0;
 
-    void Awake()
+    private void Awake()
     {
-        SetupStartGameAction();
+        SetupInputAction();
     }
 
-    void Start()
+    private void Start()
     {
-        this.ballController = this.ball.GetComponent<BallController>();
-        startGameAction.Enable(); // habilita a ação
-    }
+        if (ball == null)
+        {
+            Debug.LogError("Ball GameObject is not assigned.");
+            enabled = false;
+            return;
+        }
 
-    void OnDestroy()
-    {
-        startGameAction?.Disable();
-        startGameAction?.Dispose();
-    }
+        ballController = ball.GetComponent<BallController>();
+        if (ballController == null)
+        {
+            Debug.LogError("BallController script not found on Ball GameObject.");
+            enabled = false;
+            return;
+        }
 
-    private void SetupStartGameAction()
-    {
-        string binding = $"<Keyboard>/{startKey.ToString().ToLower()}";
+        startingPosition = ball.transform.position;
 
-        startGameAction = new InputAction(
-            name: "StartGame",
-            type: InputActionType.Button,
-            binding: binding
-        );
-
+        // Only assign the callback now (after everything is ready)
         startGameAction.performed += ctx =>
         {
             if (!started)
@@ -52,25 +54,64 @@ public class GameController : MonoBehaviour
                 ballController.Go();
             }
         };
+
+        startGameAction.Enable();
+    }
+
+    private void OnDestroy()
+    {
+        startGameAction?.Disable();
+        startGameAction?.Dispose();
+    }
+
+    private void SetupInputAction()
+    {
+
+        if(started){
+            return;
+        }
+
+        string binding = $"<Keyboard>/{startKey.ToString().ToLower()}";
+
+        startGameAction = new InputAction(
+            name: "StartGame",
+            type: InputActionType.Button,
+            binding: binding
+        );
+    }
+
+    public void StartGame()
+    {
+        ballController.Go();
     }
 
     public void ScoreGoalLeft()
     {
+        scoreRight++;
         Debug.Log("ScoreGoalLeft");
-        this.scoreRight += 1;
         UpdateUI();
+        ResetGame();
     }
 
     public void ScoreGoalRight()
     {
+        scoreLeft++;
         Debug.Log("ScoreGoalRight");
-        this.scoreLeft += 1;
         UpdateUI();
+        ResetGame();
     }
 
     private void UpdateUI()
     {
-        this.scoreTextLeft.text = this.scoreLeft.ToString();
-        this.scoreTextRight.text = this.scoreRight.ToString();
+        if (scoreTextLeft != null) scoreTextLeft.text = scoreLeft.ToString();
+        if (scoreTextRight != null) scoreTextRight.text = scoreRight.ToString();
+    }
+
+    private void ResetGame()
+    {
+        started = false;
+        ballController.Stop();
+        ball.transform.position = startingPosition;
+        ballController.Go();
     }
 }

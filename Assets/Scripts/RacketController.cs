@@ -1,46 +1,27 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
 public class RacketController : MonoBehaviour
 {
-    private string ballTagName = "Ball";
+    [Header("Settings")]
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private Key positiveKey = Key.W;
+    [SerializeField] private Key negativeKey = Key.S;
+    [SerializeField] private bool isPlayer = true;
 
-    public float speed = 5f;
-    public Key positiveKey;
-    public Key negativeKey;
-
-    public bool isPlayer = true;
+    [Header("Ball Reference (for AI only)")]
+    [SerializeField] private string ballTag = "Ball";
 
     private Rigidbody rb;
     private Transform ball;
-
     private InputAction moveAction;
     private float moveInput;
 
     private void Awake()
     {
         if (isPlayer)
-        {
             SetupPlayerInput();
-        }
-    }
-
-    private void SetupPlayerInput()
-    {
-        string positiveBinding = $"<Keyboard>/{positiveKey.ToString().ToLower()}";
-        string negativeBinding = $"<Keyboard>/{negativeKey.ToString().ToLower()}";
-
-        moveAction = new InputAction(
-            name: "Move",
-            type: InputActionType.Value
-        );
-
-        moveAction.AddCompositeBinding("1DAxis")
-            .With("Negative", negativeBinding)
-            .With("Positive", positiveBinding);
-
-        moveAction.performed += ctx => moveInput = ctx.ReadValue<float>();
-        moveAction.canceled += ctx => moveInput = 0f;
     }
 
     private void OnEnable()
@@ -60,7 +41,13 @@ public class RacketController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         if (!isPlayer)
-            ball = GameObject.FindGameObjectWithTag(ballTagName).transform;
+        {
+            GameObject ballObj = GameObject.FindGameObjectWithTag(ballTag);
+            if (ballObj != null)
+                ball = ballObj.transform;
+            else
+                Debug.LogWarning("Ball not found by tag in AI RacketController.");
+        }
     }
 
     private void FixedUpdate()
@@ -71,22 +58,35 @@ public class RacketController : MonoBehaviour
         }
         else
         {
-            if (ball == null) return;
+            if (ball == null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                return;
+            }
 
             int direction = ball.position.z.CompareTo(transform.position.z);
 
-            switch (direction)
+            rb.linearVelocity = direction switch
             {
-                case 1:
-                    rb.linearVelocity = Vector3.forward * speed;
-                    break;
-                case -1:
-                    rb.linearVelocity = Vector3.back * speed;
-                    break;
-                case 0:
-                    rb.linearVelocity = Vector3.zero;
-                    break;
-            }
+                1 => Vector3.forward * speed,
+                -1 => Vector3.back * speed,
+                _ => Vector3.zero
+            };
         }
+    }
+
+    private void SetupPlayerInput()
+    {
+        string positiveBinding = $"<Keyboard>/{positiveKey.ToString().ToLower()}";
+        string negativeBinding = $"<Keyboard>/{negativeKey.ToString().ToLower()}";
+
+        moveAction = new InputAction(name: "Move", type: InputActionType.Value);
+
+        moveAction.AddCompositeBinding("1DAxis")
+            .With("Negative", negativeBinding)
+            .With("Positive", positiveBinding);
+
+        moveAction.performed += ctx => moveInput = ctx.ReadValue<float>();
+        moveAction.canceled += _ => moveInput = 0f;
     }
 }

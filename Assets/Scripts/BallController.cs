@@ -1,102 +1,71 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class BallController : MonoBehaviour
 {
+    [Header("Movement Settings")]
+    public float speed = 5f;
+    public float minDirection = 0.5f;
+    public float baseXDirection = 0.5f;
+    public float baseYDirection = 0f;
+    public float baseZDirection = 0.5f;
 
-    //Variables not hardcoded for quick Change in case of value changing
-    private string wallTagName;
-    private string racketTagName;
-    private float baseXDirectionValue;
-    private float baseYDirectionValue;
-    private float baseZDirectionValue;
-
-    public float speed;
-    
-    public float minDirection;
-    private Vector3 direction;
+    [Header("Tags")]
+    public string wallTag = "Wall";
+    public string racketTag = "Racket";
 
     private Rigidbody rb;
+    private Vector3 direction;
+    private bool isStopped = true;
 
-    private bool stopped = true;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        this.wallTagName = "Wall";
-        this.racketTagName = "Racket";
-        this.baseXDirectionValue = 0.5f;
-        this.baseYDirectionValue = 0f;
-        this.baseZDirectionValue = 0.5f;
-        this.minDirection = 0.5f;
-
-
-        this.rb = GetComponent<Rigidbody>();
-        this.direction = new Vector3(baseXDirectionValue,baseYDirectionValue,baseZDirectionValue);
-        this.ChooseDirection();
-
+        rb = GetComponent<Rigidbody>();
+        direction = new Vector3(baseXDirection, baseYDirection, baseZDirection);
+        ChooseRandomDirection();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        // Method for testing the ball moving
-        //transform.position += direction * speed * Time.deltaTime;
-    }
-
-
-     void FixedUpdate()
-    {
-        if(stopped){
-            return;
-        }else{
+        if (!isStopped)
+        {
             rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
         }
     }
 
-
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag(wallTagName)){
-
-            direction.z = direction.z * -1;
-
+        if (other.CompareTag(wallTag))
+        {
+            direction.z *= -1f;
         }
-
-        if(other.CompareTag(racketTagName)){
-
+        else if (other.CompareTag(racketTag))
+        {
             Vector3 newDirection = (transform.position - other.transform.position).normalized;
 
-            newDirection.x = Mathf.Sign(newDirection.x) *  Mathf.Max(Mathf.Abs(newDirection.x), this.minDirection);
-            newDirection.z = Mathf.Sign(newDirection.z) *  Mathf.Max(Mathf.Abs(newDirection.z), this.minDirection);
+            newDirection.x = Mathf.Sign(newDirection.x) * Mathf.Max(Mathf.Abs(newDirection.x), minDirection);
+            newDirection.z = Mathf.Sign(newDirection.z) * Mathf.Max(Mathf.Abs(newDirection.z), minDirection);
 
-            this.direction = newDirection;
-
+            direction = newDirection;
         }
-
     }
-  private void ChooseDirection()
-{
-    float xRangeMin = -1f;
-    float yRangeMin = -1f;
-    float xRangeMax = 1f;
-    float yRangeMax = 1f;
 
-    float signX = Mathf.Sign(UnityEngine.Random.Range(xRangeMin, xRangeMax));
-    float signZ = Mathf.Sign(UnityEngine.Random.Range(yRangeMin, yRangeMax));
+    private void ChooseRandomDirection()
+    {
+        float signX = Mathf.Sign(Random.Range(-1f, 1f));
+        float signZ = Mathf.Sign(Random.Range(-1f, 1f));
 
-    this.direction = new Vector3(baseXDirectionValue * signX, baseYDirectionValue, baseZDirectionValue * signZ);
-}
+        direction = new Vector3(baseXDirection * signX, baseYDirection, baseZDirection * signZ);
+    }
 
     public void Stop()
     {
-        this.stopped = true;
+        isStopped = true;
     }
 
     public void Go()
     {
-        ChooseDirection();
-        this.stopped = false;   
+        ChooseRandomDirection();
+        isStopped = false;
     }
-
-
 }
