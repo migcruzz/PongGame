@@ -9,7 +9,7 @@ public class Menu : MonoBehaviour
     private void Start()
     {
         // Procura automaticamente o canvas chamado "MainPage" na hierarquia
-        mainPage = GameObject.Find("MainPage");
+        mainPage = GameObject.Find("MenuMainPage");
 
 
     }
