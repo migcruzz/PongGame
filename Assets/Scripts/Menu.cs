@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class Menu : MonoBehaviour
     private void Start()
     {
         // Procura automaticamente o canvas chamado "MainPage" na hierarquia
-        mainPage = GameObject.Find("MenuMainPage");
+        mainPage = GameObject.Find("Menu");
 
 
     }
@@ -18,8 +19,7 @@ public class Menu : MonoBehaviour
     {
         if (mainPage != null)
         {
-            GameConfig.Instance.SetBallSpeed(1f);
-            mainPage.SetActive(false); // Oculta o menu
+           SceneManager.LoadScene("MainScene");
         }
 
     }
