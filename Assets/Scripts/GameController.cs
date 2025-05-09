@@ -45,7 +45,6 @@ public class GameController : MonoBehaviour
 
         startingPosition = ball.transform.position;
 
-        // Only assign the callback now (after everything is ready)
         startGameAction.performed += ctx =>
         {
             if (!started)
@@ -66,10 +65,8 @@ public class GameController : MonoBehaviour
 
     private void SetupInputAction()
     {
-
-        if(started){
+        if (started)
             return;
-        }
 
         string binding = $"<Keyboard>/{startKey.ToString().ToLower()}";
 
@@ -88,7 +85,7 @@ public class GameController : MonoBehaviour
     public void ScoreGoalLeft()
     {
         scoreRight++;
-        Debug.Log("ScoreGoalLeft");
+        Debug.Log("Goal scored on left side");
         UpdateUI();
         ResetGame();
     }
@@ -96,7 +93,7 @@ public class GameController : MonoBehaviour
     public void ScoreGoalRight()
     {
         scoreLeft++;
-        Debug.Log("ScoreGoalRight");
+        Debug.Log("Goal scored on right side");
         UpdateUI();
         ResetGame();
     }

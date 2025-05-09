@@ -16,7 +16,7 @@ public class GoalController : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("No listeners attached to onTriggerEnter in GoalController.");
+                Debug.LogWarning("No listeners attached to onTriggerEnter.");
             }
         }
     }

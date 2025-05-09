@@ -14,15 +14,11 @@ public class Starter : MonoBehaviour
 
     public void StartCountdown()
     {
-        
-            animator.SetTrigger("StartCountdown");
-        
+        animator.SetTrigger("StartCountdown");
     }
 
     public void StartGame()
     {
-        
-            gameController.StartGame();
-        
+        gameController.StartGame();
     }
 }

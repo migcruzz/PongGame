@@ -8,7 +8,7 @@ public class Menu : MonoBehaviour
     public GameObject mainPage;
     public GameObject optionsPage;
 
-    [Header("Texts (opcional se quiser mostrar valores)")]
+    [Header("Texts")]
     public Text titleText;
     public Text gameModeText;
     public Text racketSpeedText;
@@ -21,7 +21,6 @@ public class Menu : MonoBehaviour
     public Button confirmButton;
     public Button cancelButton;
 
-    // ✅ Valores padrão
     private const float DefaultBallSpeed = 5f;
     private const float DefaultRacketSpeed = 4f;
     private const bool DefaultIsMultiplayer = false;
@@ -31,7 +30,6 @@ public class Menu : MonoBehaviour
         mainPage.SetActive(true);
         optionsPage.SetActive(false);
 
-        // Verifica se o GameConfig ainda não foi configurado e aplica os valores padrão
         if (GameConfig.Instance != null)
         {
             if (!GameConfig.Instance.HasBeenConfigured)
@@ -41,13 +39,11 @@ public class Menu : MonoBehaviour
                 GameConfig.Instance.SetIsMultiplayer(DefaultIsMultiplayer);
             }
 
-            // Preenche os campos visuais com os dados salvos (ou padrão se for a primeira vez)
             multiplayerToggle.isOn = GameConfig.Instance.GetIsMultiplayer();
             ballSpeedSlider.value = GameConfig.Instance.GetBallSpeed();
             racketSlider.value = GameConfig.Instance.GetRacketSpeed();
         }
 
-        // Eventos
         ballSpeedSlider.onValueChanged.AddListener(OnBallSpeedSliderChanged);
         racketSlider.onValueChanged.AddListener(OnRacketSliderChanged);
 

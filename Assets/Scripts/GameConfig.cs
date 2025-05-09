@@ -20,42 +20,42 @@ public class GameConfig : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Debug.Log("✅ GameConfig inicializado (DontDestroyOnLoad)");
+        Debug.Log("GameConfig initialized and marked to not be destroyed on load");
     }
 
     public void SetBallSpeed(float value)
     {
         ballSpeed = value;
-        Debug.Log($"🎯 Ball speed definida para: {value}");
+        Debug.Log("Ball speed set to: " + value);
     }
 
     public float GetBallSpeed()
     {
-        Debug.Log($"📥 Ball speed lida: {ballSpeed}");
+        Debug.Log("Ball speed retrieved: " + ballSpeed);
         return ballSpeed;
     }
 
     public void SetRacketSpeed(float value)
     {
         racketSpeed = value;
-        Debug.Log($"🎯 Racket speed definida para: {value}");
+        Debug.Log("Racket speed set to: " + value);
     }
 
     public float GetRacketSpeed()
     {
-        Debug.Log($"📥 Racket speed lida: {racketSpeed}");
+        Debug.Log("Racket speed retrieved: " + racketSpeed);
         return racketSpeed;
     }
 
     public void SetIsMultiplayer(bool value)
     {
         isMultiplayer = value;
-        Debug.Log($"🎯 Modo multiplayer definido como: {value}");
+        Debug.Log("Multiplayer mode set to: " + value);
     }
 
     public bool GetIsMultiplayer()
     {
-        Debug.Log($"📥 Modo multiplayer lido: {isMultiplayer}");
+        Debug.Log("Multiplayer mode retrieved: " + isMultiplayer);
         return isMultiplayer;
     }
 }
