@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject ball;
     [SerializeField] private Key startKey = Key.Space;
 
+    public Starter starter;
+
     private BallController ballController;
     private InputAction startGameAction;
     private Vector3 startingPosition;
@@ -50,7 +52,8 @@ public class GameController : MonoBehaviour
             if (!started)
             {
                 started = true;
-                ballController.Go();
+                //ballController.Go();
+                starter.StartCountdown();
             }
         };
 
@@ -109,6 +112,7 @@ public class GameController : MonoBehaviour
         started = false;
         ballController.Stop();
         ball.transform.position = startingPosition;
-        ballController.Go();
+       //ballController.Go();
+        starter.StartCountdown();
     }
 }

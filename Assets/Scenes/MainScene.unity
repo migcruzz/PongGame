@@ -1424,6 +1424,7 @@ MonoBehaviour:
   scoreTextRight: {fileID: 853453672}
   ball: {fileID: 2025339363}
   startKey: 1
+  starter: {fileID: 25896048}
 --- !u!1 &1781950437
 GameObject:
   m_ObjectHideFlags: 0
