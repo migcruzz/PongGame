@@ -18,16 +18,18 @@ public class BallController : MonoBehaviour
     private Vector3 direction;
     private bool isStopped = true;
 
-    private void Start()
+private void Start()
 {
     rb = GetComponent<Rigidbody>();
 
-    // Pega a velocidade diretamente do GameConfig
-    speed = GameConfig.Instance.GetBallSpeed();
+    // Obtém a velocidade da bola configurada no menu
+    if (GameConfig.Instance != null)
+        speed = GameConfig.Instance.GetBallSpeed();
 
     direction = new Vector3(baseXDirection, baseYDirection, baseZDirection);
     ChooseRandomDirection();
 }
+
 
 
     private void FixedUpdate()

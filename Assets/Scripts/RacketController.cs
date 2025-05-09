@@ -36,19 +36,42 @@ public class RacketController : MonoBehaviour
             moveAction?.Disable();
     }
 
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
+   private void Start()
+{
+    rb = GetComponent<Rigidbody>();
 
-        if (!isPlayer)
+    // Define a velocidade com base nas opções
+    if (GameConfig.Instance != null)
+        speed = GameConfig.Instance.GetRacketSpeed();
+
+    // Decide se este lado é controlado pelo jogador
+    if (GameConfig.Instance != null)
+    {
+        // Exemplo: se esta raquete for "PlayerLeft"
+        if (gameObject.name == "PlayerLeft")
         {
-            GameObject ballObj = GameObject.FindGameObjectWithTag(ballTag);
-            if (ballObj != null)
-                ball = ballObj.transform;
-            else
-                Debug.LogWarning("Ball not found by tag in AI RacketController.");
+            isPlayer = true;
+        }
+        else if (gameObject.name == "PlayerRight")
+        {
+            isPlayer = GameConfig.Instance.GetIsMultiplayer(); // true se for multiplayer
         }
     }
+
+    if (!isPlayer)
+    {
+        GameObject ballObj = GameObject.FindGameObjectWithTag(ballTag);
+        if (ballObj != null)
+            ball = ballObj.transform;
+        else
+            Debug.LogWarning("Ball not found by tag in AI RacketController.");
+    }
+    else
+    {
+        SetupPlayerInput();
+    }
+}
+
 
     private void FixedUpdate()
     {

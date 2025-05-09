@@ -9,7 +9,7 @@ public class Starter : MonoBehaviour
     public void Start()
     {
         animator = GetComponent<Animator>();
-        gameController = FindObjectOfType<GameController>();
+        gameController = FindAnyObjectByType<GameController>();
     }
 
     public void StartCountdown()
