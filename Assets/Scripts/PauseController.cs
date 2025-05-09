@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class PauseController : MonoBehaviour
@@ -7,19 +6,7 @@ public class PauseController : MonoBehaviour
     [Header("Menu UI")]
     [SerializeField] private GameObject pauseMenuUI;
 
-    private InputAction pauseAction;
     private bool isPaused = false;
-
-
-    private void OnEnable()
-    {
-        pauseAction.Enable();
-    }
-
-    private void OnDisable()
-    {
-        pauseAction.Disable();
-    }
 
     public void TogglePause()
     {
@@ -45,7 +32,7 @@ public class PauseController : MonoBehaviour
 
     public void GoToHome()
     {
-        Time.timeScale = 1f; // Garante que o jogo não fique pausado após a troca
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
     }
 }
