@@ -13,10 +13,13 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject ball;
     [SerializeField] private Key startKey = Key.Space;
 
-    public Starter starter;
+    [Header("References")]
+    [SerializeField] private Starter starter;
+    [SerializeField] private PauseController pauseController;
 
     private BallController ballController;
     private InputAction startGameAction;
+    private InputAction pauseAction;
     private Vector3 startingPosition;
 
     private bool started = false;
@@ -25,7 +28,8 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        SetupInputAction();
+        SetupStartGameInput();
+        SetupPauseInput();
     }
 
     private void Start()
@@ -52,7 +56,6 @@ public class GameController : MonoBehaviour
             if (!started)
             {
                 started = true;
-                //ballController.Go();
                 starter.StartCountdown();
             }
         };
@@ -64,20 +67,22 @@ public class GameController : MonoBehaviour
     {
         startGameAction?.Disable();
         startGameAction?.Dispose();
+
+        pauseAction?.Disable();
+        pauseAction?.Dispose();
     }
 
-    private void SetupInputAction()
+    private void SetupStartGameInput()
     {
-        if (started)
-            return;
-
         string binding = $"<Keyboard>/{startKey.ToString().ToLower()}";
+        startGameAction = new InputAction(name: "StartGame", type: InputActionType.Button, binding: binding);
+    }
 
-        startGameAction = new InputAction(
-            name: "StartGame",
-            type: InputActionType.Button,
-            binding: binding
-        );
+    private void SetupPauseInput()
+    {
+        pauseAction = new InputAction(name: "Pause", type: InputActionType.Button, binding: "<Keyboard>/escape");
+        pauseAction.performed += ctx => pauseController.TogglePause();
+        pauseAction.Enable();
     }
 
     public void StartGame()
@@ -112,7 +117,6 @@ public class GameController : MonoBehaviour
         started = false;
         ballController.Stop();
         ball.transform.position = startingPosition;
-       //ballController.Go();
         starter.StartCountdown();
     }
 }
